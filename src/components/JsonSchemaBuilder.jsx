@@ -1,9 +1,7 @@
 import React, { useState } from 'react'
 
-// Move idCounter outside the component so it doesn't reset on every render
 let idCounter = 0
 
-// Field component for rendering individual fields - moved outside to prevent recreation
 const FieldComponent = ({ field, depth = 0, updateField, deleteField, addField }) => {
     const indentClass = depth > 0 ? `ml-${depth * 8}` : ''
 
@@ -23,20 +21,11 @@ const FieldComponent = ({ field, depth = 0, updateField, deleteField, addField }
                     onChange={(e) => updateField(field.id, 'type', e.target.value)}
                     className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
+
                     <option value="string">string</option>
                     <option value="number">number</option>
                     <option value="nested">nested</option>
                 </select>
-
-                <label className="flex items-center">
-                    <input
-                        type="checkbox"
-                        checked={false}
-                        readOnly
-                        className="mr-2"
-                    />
-                    <span className="text-sm text-gray-600">Required</span>
-                </label>
 
                 <button
                     onClick={() => deleteField(field.id)}
@@ -73,12 +62,10 @@ const FieldComponent = ({ field, depth = 0, updateField, deleteField, addField }
 const JsonSchemaBuilder = () => {
     const [fields, setFields] = useState([])
 
-    // Function to generate a unique ID for each field
     const generateId = () => {
         return ++idCounter
     }
 
-    // Function to add a new field
     const addField = (parentId = null) => {
         const newField = {
             id: generateId(),
@@ -102,7 +89,6 @@ const JsonSchemaBuilder = () => {
         }
     }
 
-    // Helper function to update nested fields recursively
     const updateNestedField = (field, parentId, newField) => {
         if (field.children && field.children.length > 0) {
             return {
@@ -118,12 +104,10 @@ const JsonSchemaBuilder = () => {
         return field
     }
 
-    // Function to update field properties
     const updateField = (fieldId, property, value) => {
         setFields(prev => prev.map(field => updateFieldRecursively(field, fieldId, property, value)))
     }
 
-    // Helper function to update field recursively
     const updateFieldRecursively = (field, fieldId, property, value) => {
         if (field.id === fieldId) {
             const updatedField = { ...field, [property]: value }
@@ -144,12 +128,10 @@ const JsonSchemaBuilder = () => {
         return field
     }
 
-    // Function to delete a field
     const deleteField = (fieldId) => {
         setFields(prev => prev.filter(field => field.id !== fieldId).map(field => deleteFieldRecursively(field, fieldId)))
     }
 
-    // Helper function to delete field recursively
     const deleteFieldRecursively = (field, fieldId) => {
         if (field.children && field.children.length > 0) {
             return {
@@ -160,7 +142,6 @@ const JsonSchemaBuilder = () => {
         return field
     }
 
-    // Function to generate JSON schema
     const generateJsonSchema = () => {
         const schema = {}
 
@@ -173,7 +154,6 @@ const JsonSchemaBuilder = () => {
         return schema
     }
 
-    // Helper function to generate field value based on type
     const generateFieldValue = (field) => {
         switch (field.type) {
             case 'string':
@@ -196,7 +176,6 @@ const JsonSchemaBuilder = () => {
     return (
         <div className="max-w-6xl mx-auto p-6 bg-gray-50 min-h-screen">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Schema Builder Panel */}
                 <div className="bg-white p-6 rounded-lg shadow-sm">
                     <h2 className="text-xl font-semibold mb-4">Schema Builder</h2>
 
@@ -224,9 +203,13 @@ const JsonSchemaBuilder = () => {
                     >
                         Submit
                     </button>
+                    {/* Logs to console: When the button is clicked, it runs console.log('Form submitted:', 
+                    generateJsonSchema()) and prints the JSON: It outputs "Form submitted:" which is followed 
+                    by the current JSON schema to the browser's developer console overall the submit button does not do 
+                    anything on the frontend*/}
                 </div>
 
-                {/* JSON Preview Panel */}
+
                 <div className="bg-white p-6 rounded-lg shadow-sm">
                     <h2 className="text-xl font-semibold mb-4">JSON Preview</h2>
                     <pre className="bg-gray-100 p-4 rounded-md overflow-auto max-h-96 text-sm">
@@ -239,8 +222,3 @@ const JsonSchemaBuilder = () => {
 }
 
 export default JsonSchemaBuilder
-
-
-
-
-
